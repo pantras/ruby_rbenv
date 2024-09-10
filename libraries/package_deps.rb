@@ -35,11 +35,16 @@ class Chef
       end
 
       def package_deps
+puts "node['platform_family']=#{node['platform_family']} node['platform']=#{node['platform']}"
         case node['platform_family']
         when 'mac_os_x'
           %w(openssl makedepend pkg-config libffi)
         when 'rhel', 'fedora', 'amazon'
-          %w(gcc bzip2 openssl-devel libffi-devel readline-devel zlib-devel gdbm-devel ncurses-devel make)
+          if node['platform'] == 'centos'&& node['platform_version'].to_f >= 9.0
+            %w(gcc bzip2 openssl-devel libffi-devel readline-devel zlib-devel ncurses-devel make)
+          else
+            %w(gcc bzip2 openssl-devel libffi-devel readline-devel zlib-devel ncurses-devel make)
+          end
         when 'debian'
           if platform?('ubuntu') && node['platform_version'].to_i >= 20
             %w(gcc autoconf bison build-essential libssl-dev libreadline6-dev zlib1g-dev libncurses5-dev libffi-dev libgdbm-dev make)
